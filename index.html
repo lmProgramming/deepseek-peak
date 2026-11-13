@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+
+  <title>DeepSeek API Peak &amp; Off-Peak Pricing Tracker</title>
+  <meta name="description" content="Check DeepSeek API peak and off-peak pricing live. See the current rate, the next pricing window, and a countdown to the next price change in your local time.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="MKDev">
+  <link rel="canonical" href="https://lmprogramming.github.io/deepseek-peak/">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="manifest" href="./site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DeepSeek Pricing Tracker">
+  <meta property="og:title" content="DeepSeek API Peak &amp; Off-Peak Pricing Tracker">
+  <meta property="og:description" content="Is DeepSeek API peak or off-peak right now? Check live pricing and the countdown to the next price change.">
+  <meta property="og:url" content="https://lmprogramming.github.io/deepseek-peak/">
+  <meta property="og:image" content="https://lmprogramming.github.io/deepseek-peak/assets/social-preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="DeepSeek API pricing tracker showing live peak and off-peak status">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DeepSeek API Peak &amp; Off-Peak Pricing Tracker">
+  <meta name="twitter:description" content="Live DeepSeek API pricing status with a countdown to the next peak or off-peak window.">
+  <meta name="twitter:image" content="https://lmprogramming.github.io/deepseek-peak/assets/social-preview.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DeepSeek API Pricing Tracker",
+    "url": "https://lmprogramming.github.io/deepseek-peak/",
+    "description": "A live tracker for DeepSeek API peak and off-peak pricing windows, with local-time conversion and a countdown to the next price change.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "isAccessibleForFree": true,
+    "browserRequirements": "Requires JavaScript"
+  }
+  </script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #000;
+      color: #fff;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background: #000;
+      color: #fff;
+    }
+
+    main {
+      width: min(100% - 40px, 760px);
+      margin: 0 auto;
+      padding: 76px 0 48px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 36px;
+      color: #888;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    #status {
+      margin: 0;
+      font-size: clamp(54px, 12vw, 92px);
+      line-height: 1;
+      font-weight: 750;
+      letter-spacing: -.065em;
+    }
+
+    #multiplier {
+      margin: 14px 0 0;
+      color: #999;
+      font-size: 18px;
+    }
+
+    .rule {
+      width: 180px;
+      height: 1px;
+      margin: 42px auto 36px;
+      background: #303030;
+    }
+
+    .label {
+      margin: 0 0 12px;
+      color: #777;
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    #transition {
+      margin: 0;
+      font-size: clamp(20px, 5vw, 26px);
+      font-weight: 550;
+    }
+
+    #countdown {
+      margin: 12px 0 0;
+      color: #888;
+      font-size: 16px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #clock {
+      margin: 38px 0 0;
+      color: #666;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .about {
+      margin: 110px auto 0;
+      padding-top: 28px;
+      border-top: 1px solid #202020;
+      color: #929292;
+      text-align: left;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .about h2, .about h3 {
+      color: #ddd;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .about h2 { font-size: 20px; }
+    .about h3 { margin-top: 28px; font-size: 16px; }
+
+    a { color: #ddd; text-underline-offset: 3px; }
+    a:hover { color: #fff; }
+
+    footer {
+      margin-top: 34px;
+      color: #555;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      main { padding-top: 56px; }
+      .about { margin-top: 82px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">DeepSeek API pricing</p>
+
+    <section aria-live="polite" aria-atomic="true" aria-label="Current DeepSeek API pricing status">
+      <h1 id="status">LOADING</h1>
+      <p id="multiplier">Checking current pricing…</p>
+
+      <div class="rule" aria-hidden="true"></div>
+
+      <p class="label">Next price change</p>
+      <p id="transition">Calculating…</p>
+      <p id="countdown">—</p>
+      <p id="clock">—</p>
+    </section>
+
+    <section class="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">DeepSeek API peak and off-peak pricing</h2>
+      <p>
+        DeepSeek offers different API rates during peak and off-peak hours.
+        Off-peak rates are 50% of peak rates, so scheduling non-urgent API
+        workloads for off-peak periods can reduce token costs.
+      </p>
+
+      <h3>When does DeepSeek peak pricing apply?</h3>
+      <p>
+        Peak pricing applies Monday through Friday from 01:00 to 04:00 UTC
+        and from 06:00 to 10:00 UTC, excluding Chinese public holidays.
+        All other times are off-peak, including weekends and Chinese public
+        holidays in full.
+      </p>
+
+      <h3>Local time, automatically</h3>
+      <p>
+        The tracker evaluates the schedule in UTC and displays your device's
+        local time. No account, API key, or installation is required.
+      </p>
+
+      <p>
+        Always confirm current rates and schedule details in the
+        <a href="https://api-docs.deepseek.com/quick_start/pricing/" rel="noopener noreferrer" target="_blank">official DeepSeek API pricing documentation</a>.
+        Pricing and schedules may change.
+      </p>
+    </section>
+
+    <footer>
+      An independent community utility. Not affiliated with or endorsed by DeepSeek.
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    /*
+     * DeepSeek's official schedule:
+     * Peak: 01:00–04:00 and 06:00–10:00 UTC, Monday–Friday.
+     * Chinese public holidays are entirely off-peak.
+     *
+     * Add holiday dates as YYYY-MM-DD when updating the schedule.
+     * The list below is intentionally empty rather than guessing future
+     * public-holiday dates. Check the official schedule for holiday exceptions.
+     */
+    const CHINESE_PUBLIC_HOLIDAYS = new Set([
+      // "2026-01-01",
+    ]);
+
+    const PEAK_WINDOWS_UTC = [
+      [1, 4],
+      [6, 10]
+    ];
+
+    const statusElement = document.getElementById("status");
+    const multiplierElement = document.getElementById("multiplier");
+    const transitionElement = document.getElementById("transition");
+    const countdownElement = document.getElementById("countdown");
+    const clockElement = document.getElementById("clock");
+
+    function utcDateKey(date) {
+      return [
+        date.getUTCFullYear(),
+        String(date.getUTCMonth() + 1).padStart(2, "0"),
+        String(date.getUTCDate()).padStart(2, "0")
+      ].join("-");
+    }
+
+    function isPeak(date) {
+      const day = date.getUTCDay();
+      if (day === 0 || day === 6) return false;
+      if (CHINESE_PUBLIC_HOLIDAYS.has(utcDateKey(date))) return false;
+
+      const hour = date.getUTCHours();
+      return PEAK_WINDOWS_UTC.some(([start, end]) =>
+        hour >= start && hour < end
+      );
+    }
+
+    function findNextTransition(now) {
+      const currentStatus = isPeak(now);
+      const candidate = new Date(now);
+      candidate.setUTCMinutes(0, 0, 0);
+
+      // Every scheduled change occurs on a UTC hour boundary.
+      // Scan those boundaries only; this stays lightweight even with
+      // a continuously updating countdown.
+      for (let hour = 1; hour <= 8 * 24; hour++) {
+        candidate.setTime(candidate.getTime() + 60 * 60 * 1000);
+        if (isPeak(candidate) !== currentStatus) {
+          return new Date(candidate);
+        }
+      }
+
+      return null;
+    }
+
+    function formatDuration(milliseconds) {
+      const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      const parts = [];
+      if (days) parts.push(`${days}d`);
+      if (hours || days) parts.push(`${hours}h`);
+      parts.push(`${minutes}m`, `${seconds}s`);
+      return parts.join(" ");
+    }
+
+    function update() {
+      const now = new Date();
+      const peak = isPeak(now);
+      const next = findNextTransition(now);
+
+      statusElement.textContent = peak ? "PEAK" : "OFF-PEAK";
+      multiplierElement.textContent = peak
+        ? "2× peak price"
+        : "0.5× peak price";
+
+      if (next) {
+        transitionElement.textContent = peak
+          ? "Off-peak starts"
+          : "Peak starts";
+        countdownElement.textContent = formatDuration(next - now);
+      } else {
+        transitionElement.textContent = "No upcoming change found";
+        countdownElement.textContent = "";
+      }
+
+      const localTime = now.toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      const utcTime = now.toISOString().slice(11, 19);
+      const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      clockElement.textContent =
+        `Local: ${localTime} (${localZone}) · UTC: ${utcTime}`;
+    }
+
+    update();
+    // Update the status and countdown every second for a smooth timer.
+    // The schedule itself is evaluated from the current time each update.
+    setInterval(update, 1000);
+  </script>
+</body>
+</html>
